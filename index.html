@@ -6,7 +6,7 @@ const dialogue = document.getElementById("dialogue");
 let noClicks = 0;
 
 let score = 0;
-let scoreDisplay;
+let scoreDisplay = null; // important fix
 
 const compliments = [
     "Your smile is cute 😄",
@@ -23,6 +23,8 @@ const maxLanes = 10;
 const heartLanes = Array(maxLanes).fill(false);
 
 function createHeart() {
+
+    if (!scoreDisplay) return; // prevents crash
 
     const freeLanes = [];
     heartLanes.forEach((occupied, i) => { if(!occupied) freeLanes.push(i); });
@@ -47,7 +49,6 @@ function createHeart() {
     const swaySpeed = 0.01 + Math.random()*0.02;
     let sway = Math.random()*2*Math.PI;
 
-    // CLICKABLE HEART
     heart.style.cursor = "pointer";
 
     heart.addEventListener("click", () => {
@@ -55,18 +56,18 @@ function createHeart() {
         score++;
         scoreDisplay.innerText = "Points: " + score + " 💖";
 
-        // 🔊 Pop sound
-        const popSound = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-bubble-pop-up-alert-notification-2357.mp3");
+        // simple pop sound (safe)
+        const popSound = new Audio(
+            "https://assets.mixkit.co/sfx/preview/mixkit-bubble-pop-up-alert-notification-2357.mp3"
+        );
         popSound.play();
 
         heart.classList.add("pop");
 
-        // 💌 Compliment every 10 points
         if (score % 10 === 0 && score < 50) {
             alert(compliments[Math.floor(Math.random()*compliments.length)]);
         }
 
-        // 🏆 Win at 50 points
         if (score === 50) {
             const winMessage = document.createElement("div");
             winMessage.className = "message";
@@ -74,10 +75,7 @@ function createHeart() {
             document.body.appendChild(winMessage);
         }
 
-        setTimeout(() => {
-            heart.remove();
-        }, 300);
-
+        setTimeout(() => heart.remove(), 300);
         heartLanes[laneIndex] = false;
     });
 
@@ -103,13 +101,13 @@ yesBtn.addEventListener("click", () => {
 
     document.body.innerHTML = "";
 
-    // Create score display
+    score = 0;
+
     scoreDisplay = document.createElement("div");
     scoreDisplay.className = "score";
     scoreDisplay.innerText = "Points: 0 💖";
     document.body.appendChild(scoreDisplay);
 
-    // Romantic message
     const message = document.createElement('div');
     message.className = 'message';
     message.innerHTML =
@@ -125,7 +123,6 @@ noBtn.addEventListener("mouseenter", ()=>{
     if(noClicks<2){
         let x=Math.random()*(window.innerWidth-noBtn.offsetWidth-20);
         let y=Math.random()*(window.innerHeight-noBtn.offsetHeight-20);
-        noBtn.style.transition="all 0.5s";
         noBtn.style.position="absolute";
         noBtn.style.left=x+"px";
         noBtn.style.top=y+"px";
@@ -137,11 +134,10 @@ noBtn.addEventListener("click", ()=>{
     if(noClicks===1) dialogue.innerHTML='"I\'m scared of him…"';
     else if(noClicks===2){
         noBtn.innerHTML="🖕";
-        noBtn.style.position="absolute";
         let rect=yesBtn.getBoundingClientRect();
+        noBtn.style.position="absolute";
         noBtn.style.left=(rect.left+rect.width+10)+"px";
         noBtn.style.top=rect.top+"px";
-        noBtn.style.transform="rotate(20deg)";
         dialogue.innerHTML='"Fine, you win!"';
     }
 });
