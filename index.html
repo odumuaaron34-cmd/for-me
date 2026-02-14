@@ -77,7 +77,6 @@
             background-color: #ff4e75;
             transform: rotate(45deg);
             animation: floatUp linear infinite;
-            cursor: pointer;
         }
 
         .heart::before,
@@ -125,13 +124,13 @@
 
         .message {
             position: absolute;
-            top: 60%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             font-size: 24px;
             color: #ffb6c1;
             opacity: 0;
-            animation: fadeInText 2s forwards 1s;
+            animation: fadeInText 2s forwards 0.5s;
             white-space: pre-line;
         }
 
@@ -140,18 +139,17 @@
             to {opacity: 1;}
         }
 
-        /* Big interactive heart */
+        /* Big heart with hidden easter egg */
         .bigHeart {
             position: absolute;
             width: 120px;
             height: 120px;
-            top: 50%;
+            top: 60%;
             left: 50%;
             transform: translate(-50%, -50%) rotate(45deg) scale(0);
             background-color: #ff4e75;
             border-radius: 50%;
             opacity: 0.9;
-            cursor: pointer;
             animation: bloom 1s forwards 2s;
         }
 
@@ -166,6 +164,31 @@
         }
         .bigHeart::before { top: -60px; left: 0; }
         .bigHeart::after { left: 60px; top: 0; }
+
+        /* Small clickable easter egg */
+        .easterEgg {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-10%, -10%) rotate(45deg);
+            background-color: #ffcccc;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .easterEgg::before,
+        .easterEgg::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ffcccc;
+            border-radius: 50%;
+        }
+        .easterEgg::before { top: -10px; left: 0; }
+        .easterEgg::after { left: 10px; top: 0; }
     </style>
 </head>
 <body>
@@ -184,7 +207,7 @@
         let dialogue = document.getElementById("dialogue");
         let noClicks = 0;
 
-        // Yes button triggers flowers, message, and interactive heart
+        // Yes button triggers flowers + first message
         yesBtn.addEventListener("click", () => {
             document.body.innerHTML = "";
 
@@ -199,19 +222,24 @@
                 document.body.appendChild(flower);
             }
 
-            // Message
+            // First message
             let message = document.createElement('div');
             message.className = 'message';
-            message.innerHTML = `"I find myself smiling for no reason, and then I realize there is a reason. It’s you ❤️"\n"Glad you're my Valentine"`;
+            message.innerHTML = `"I find myself smiling for no reason, and then I realize there is a reason. It’s you ❤️"`;
             document.body.appendChild(message);
 
-            // Big interactive heart
+            // Big heart
             let heart = document.createElement('div');
             heart.className = 'bigHeart';
             document.body.appendChild(heart);
 
-            heart.addEventListener("click", () => {
-                alert("Here's my heart 💖");
+            // Small hidden easter egg on top of heart
+            let easterEgg = document.createElement('div');
+            easterEgg.className = 'easterEgg';
+            heart.appendChild(easterEgg);
+
+            easterEgg.addEventListener("click", () => {
+                window.location.href = "valentine_easter_egg.html"; // Redirect to another page
             });
         });
 
@@ -254,12 +282,6 @@
             const rotations = [0, 180, 90, -90];
             const rot = rotations[Math.floor(Math.random() * rotations.length)];
             heart.style.setProperty('--rotation', rot + 'deg');
-
-            // Clickable small hearts
-            heart.addEventListener("click", () => {
-                alert("Here's my heart 💖");
-            });
-
             document.body.appendChild(heart);
             setTimeout(() => heart.remove(), 5000);
         }
