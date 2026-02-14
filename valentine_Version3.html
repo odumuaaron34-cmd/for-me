@@ -1,32 +1,368 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Valentine's Day</title>
+    <title>Strategic Decision 💘</title>
     <style>
         body {
-            background-color: #ffcccb;
+            background-color: #0f0f1a;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
             text-align: center;
-            font-family: 'Arial', sans-serif;
+            padding-top: 100px;
+            overflow: hidden;
+            transition: background-color 0.5s;
         }
-        h1 {
-            color: red;
+
+        .glow {
+            font-size: 60px;
+            color: #ff1e4d;
+            text-shadow: 
+                0 0 5px #ff1e4d,
+                0 0 10px #ff1e4d,
+                0 0 20px #ff1e4d,
+                0 0 40px #ff0033;
+            animation: pulse 2s infinite;
         }
+
+        @keyframes pulse {
+            0%, 100% {
+                text-shadow: 
+                    0 0 5px #ff1e4d,
+                    0 0 10px #ff1e4d,
+                    0 0 20px #ff1e4d,
+                    0 0 40px #ff0033;
+            }
+            50% {
+                text-shadow: 
+                    0 0 10px #ff4d6d,
+                    0 0 20px #ff4d6d,
+                    0 0 30px #ff1e4d,
+                    0 0 60px #ff0033;
+            }
+        }
+
+        button {
+            background-color: #ff4e75;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 15px;
+            transition: 0.3s;
+            position: relative;
+            user-select: none;
+        }
+
+        button:hover {
+            background-color: #ff2e5f;
+            transform: scale(1.1);
+        }
+
+        #dialogue {
+            margin-top: 30px;
+            font-size: 22px;
+            color: #ff8fab;
+            animation: fadeIn 1s;
+            min-height: 30px;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
         .heart {
-            color: red;
-            font-size: 50px;
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff4e75;
+            transform: rotate(45deg);
+            animation: floatUp linear infinite;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff4e75;
+            border-radius: 50%;
+        }
+
+        .heart::before { top: -10px; left: 0; }
+        .heart::after { left: 10px; top: 0; }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(45deg); opacity: 1; }
+            100% { transform: translateY(-800px) rotate(45deg); opacity: 0; }
+        }
+
+        .middleFinger {
+            font-size: 24px;
+            color: #ff4e75;
+            transform: rotate(0deg);
+            transition: transform 0.5s;
+            cursor: default;
+        }
+
+        .flower {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background-color: #ff4e75;
+            border-radius: 50%;
+            opacity: 0.9;
+            animation: bloom 1s forwards;
+        }
+
+        @keyframes bloom {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .message {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 28px;
+            color: #ffb6c1;
+            white-space: pre-wrap;
+        }
+
+        .interactive-heart {
+            font-size: 120px;
+            cursor: pointer;
+            display: inline-block;
+            margin: 20px;
+            transition: transform 0.2s, filter 0.2s;
+            animation: heartBeat 1.5s infinite;
+            user-select: none;
+        }
+
+        .interactive-heart:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 20px #ff1e4d);
+        }
+
+        .interactive-heart:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes heartBeat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .success-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            color: #ff1e4d;
+            text-shadow: 
+                0 0 10px #ff1e4d,
+                0 0 20px #ff1e4d;
+            white-space: nowrap;
+            opacity: 0;
+            animation: popIn 0.8s ease-out forwards;
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0);
+            }
+            70% {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .heart-rain {
+            position: absolute;
+            font-size: 40px;
+            animation: heartRain 3s ease-in forwards;
+            pointer-events: none;
+        }
+
+        @keyframes heartRain {
+            0% {
+                opacity: 1;
+                transform: translateY(-100px) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(800px) rotate(360deg);
+            }
         }
     </style>
-    <script>
-        function showMessage() {
-            alert('Happy Valentine\'s Day!');
-        }
-    </script>
 </head>
 <body>
-    <h1>Happy Valentine's Day!</h1>
-    <div class="heart">&#10084;</div>
-    <button onclick="showMessage()">Click me for a surprise!</button>
+
+    <h1 class="glow">Nicole</h1>
+    <h2>Do you want to be my Valentine? 💘</h2>
+
+    <button id="yesBtn">Yes 🙂</button>
+    <button id="noBtn">No 😌</button>
+
+    <p id="dialogue"></p>
+
+    <script>
+        let noBtn = document.getElementById("noBtn");
+        let yesBtn = document.getElementById("yesBtn");
+        let dialogue = document.getElementById("dialogue");
+        let noClicks = 0;
+        let heartClicked = false;
+
+        const noDialogues = [
+            '"I\'m scared of him…"',
+            '"Come on, give me a chance 🥺"',
+            '"Why are you like this? 😭"',
+            '"I believe in you! Click yes!"',
+            '"Your loss baby 💔"',
+            '"This is getting awkward… 😬"',
+            '"Please? For me? 🙏"',
+            '"I\'m just a sad button now 😢"'
+        ];
+
+        yesBtn.addEventListener("click", () => {
+            document.body.innerHTML = "";
+            document.body.style.backgroundColor = "#1a0f2e";
+
+            for(let i=0;i<5;i++){ 
+                let flower = document.createElement('div');
+                flower.className = 'flower';
+                flower.style.left = (20 + Math.random()*60) + "%";
+                flower.style.top = (20 + Math.random()*50) + "%";
+                flower.style.backgroundColor = `hsl(${Math.random()*360}, 80%, 60%)`;
+                document.body.appendChild(flower);
+            }
+
+            let message = document.createElement('div');
+            message.className = 'message';
+            document.body.appendChild(message);
+
+            const text = "I knew you would pick this, you had no choice. 💖";
+            let index = 0;
+
+            function type() {
+                if(index < text.length){
+                    message.innerHTML += text.charAt(index);
+                    index++;
+                    setTimeout(type, 100);
+                }
+            }
+            type();
+
+            setTimeout(() => {
+                let heartContainer = document.createElement('div');
+                heartContainer.style.position = "absolute";
+                heartContainer.style.top = "30%";
+                heartContainer.style.left = "50%";
+                heartContainer.style.transform = "translateX(-50%)";
+                document.body.appendChild(heartContainer);
+
+                let interactiveHeart = document.createElement('div');
+                interactiveHeart.className = 'interactive-heart';
+                interactiveHeart.innerHTML = '💖';
+                heartContainer.appendChild(interactiveHeart);
+
+                interactiveHeart.addEventListener('click', (e) => {
+                    if (heartClicked) return;
+                    heartClicked = true;
+
+                    for (let i = 0; i < 30; i++) {
+                        setTimeout(() => {
+                            let heartRain = document.createElement('div');
+                            heartRain.className = 'heart-rain';
+                            heartRain.innerHTML = '💖';
+                            heartRain.style.left = Math.random() * window.innerWidth + 'px';
+                            heartRain.style.animationDuration = (2 + Math.random() * 2) + 's';
+                            heartRain.style.color = `hsl(${Math.random()*20 + 340}, 100%, 50%)`;
+                            document.body.appendChild(heartRain);
+
+                            setTimeout(() => heartRain.remove(), 5000);
+                        }, i * 50);
+                    }
+
+                    let successMsg = document.createElement('div');
+                    successMsg.className = 'success-message';
+                    successMsg.innerHTML = "You unlocked the heart! 💕";
+                    document.body.appendChild(successMsg);
+
+                    interactiveHeart.style.pointerEvents = 'none';
+                    interactiveHeart.style.opacity = '0.5';
+                });
+
+                let hint = document.createElement('div');
+                hint.style.position = "absolute";
+                hint.style.top = "45%";
+                hint.style.left = "50%";
+                hint.style.transform = "translateX(-50%)";
+                hint.style.fontSize = "14px";
+                hint.style.color = "#ff8fab";
+                hint.style.opacity = "0.7";
+                hint.innerHTML = "🔓 Click the heart for a surprise...";
+                hint.style.animation = "fadeIn 2s";
+                document.body.appendChild(hint);
+            }, 1500);
+        });
+
+        noBtn.addEventListener("mouseenter", () => {
+            if (noClicks < noDialogues.length - 1) {
+                let x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+                let y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 100);
+                noBtn.style.transition = "all 0.5s";
+                noBtn.style.position = "absolute";
+                noBtn.style.left = x + "px";
+                noBtn.style.top = y + "px";
+            }
+        });
+
+        noBtn.addEventListener("click", () => {
+            if (noClicks < noDialogues.length - 1) {
+                dialogue.innerHTML = noDialogues[noClicks];
+                noClicks++;
+            } else {
+                noBtn.innerHTML = "🖕";
+                noBtn.classList.add("middleFinger");
+                noBtn.style.position = "absolute";
+                let rect = yesBtn.getBoundingClientRect();
+                noBtn.style.left = (rect.left + rect.width + 10) + "px";
+                noBtn.style.top = rect.top + "px";
+                noBtn.removeEventListener("mouseenter", arguments.callee);
+                dialogue.innerHTML = '"Fine, you win!"';
+            }
+        });
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.style.left = Math.random() * window.innerWidth + 'px';
+            heart.style.animationDuration = 4 + Math.random() * 3 + 's';
+            heart.style.fontSize = 10 + Math.random() * 20 + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 7000);
+        }
+        setInterval(createHeart, 300);
+    </script>
+
 </body>
 </html>
