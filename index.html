@@ -69,35 +69,29 @@
             to {opacity: 1;}
         }
 
-        /* Floating clickable confetti */
-        .confetti {
+        /* Floating hearts */
+        .heart {
             position: absolute;
             width: 20px;
             height: 20px;
             background-color: #ff4e75;
             transform: rotate(45deg);
             border-radius: 5px;
-            cursor: pointer;
-            animation: floatUp linear infinite;
+            opacity: 0.8;
         }
 
-        .confetti::before,
-        .confetti::after {
+        .heart::before,
+        .heart::after {
             content: "";
             position: absolute;
             width: 20px;
             height: 20px;
-            background-color: inherit;
+            background-color: #ff4e75;
             border-radius: 50%;
         }
 
-        .confetti::before { top: -10px; left: 0; }
-        .confetti::after { left: 10px; top: 0; }
-
-        @keyframes floatUp {
-            0% { transform: translateY(0) rotate(var(--rotation)); opacity: 1; }
-            100% { transform: translateY(-600px) rotate(var(--rotation)); opacity: 0; }
-        }
+        .heart::before { top: -10px; left: 0; }
+        .heart::after { left: 10px; top: 0; }
 
         /* Middle finger style */
         .middleFinger {
@@ -141,6 +135,15 @@
             to {opacity: 1;}
         }
 
+        /* Clickable confetti circles */
+        .confetti {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
@@ -159,7 +162,45 @@
         let dialogue = document.getElementById("dialogue");
         let noClicks = 0;
 
-        // Yes button triggers flowers + message + clickable confetti
+        // Compliments list
+        const compliments = [
+            "Your smile is cute 😄",
+            "You’re funny but not too funny 😏",
+            "I love how thoughtful you are 💖",
+            "You have a great laugh 😆",
+            "Your energy is contagious ✨",
+            "You always make things better 🌸",
+            "You’re cute when you’re serious 😌",
+            "You’re just amazing, honestly 💕"
+        ];
+
+        // Function to create floating hearts
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.style.left = Math.random() * (window.innerWidth - 30) + 'px';
+            heart.style.width = 15 + Math.random()*20 + 'px';
+            heart.style.height = heart.style.width;
+
+            const speed = 3 + Math.random() * 3; // pixels per frame
+            let posY = window.innerHeight + 20;
+            const rotation = Math.random()*360;
+
+            function animate() {
+                posY -= speed;
+                heart.style.transform = `translateY(${posY}px) rotate(${rotation}deg)`;
+                if (posY + parseInt(heart.style.height) > 0) {
+                    requestAnimationFrame(animate);
+                } else {
+                    heart.remove();
+                }
+            }
+
+            document.body.appendChild(heart);
+            animate();
+        }
+
+        // Yes button click
         yesBtn.addEventListener("click", () => {
             document.body.innerHTML = "";
 
@@ -174,33 +215,36 @@
                 document.body.appendChild(flower);
             }
 
-            // Main message
+            // Message
             let message = document.createElement('div');
             message.className = 'message';
             message.innerHTML = `"I find myself smiling for no reason, and then I realize there is a reason. It’s you ❤️"\n"Glad you are my Valentine"`;
             document.body.appendChild(message);
 
+            // Generate floating hearts continuously
+            setInterval(createHeart, 500);
+
             // Clickable confetti
-            for (let i=0;i<10;i++){
+            for(let i=0;i<10;i++){
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
-                confetti.style.left = Math.random() * (window.innerWidth - 40) + 'px';
-                confetti.style.top = 100 + Math.random() * 300 + 'px'; // stays above message
-                const rotations = [0, 90, 180, 270];
-                confetti.style.setProperty('--rotation', rotations[Math.floor(Math.random()*rotations.length)] + 'deg');
+                confetti.style.left = Math.random() * (window.innerWidth - 20) + 'px';
+                confetti.style.top = 100 + Math.random() * 250 + 'px'; // above message
+                confetti.style.backgroundColor = `hsl(${Math.random()*360}, 80%, 60%)`;
 
+                // Assign a unique compliment randomly
+                const comp = compliments[Math.floor(Math.random()*compliments.length)];
                 confetti.addEventListener("click", () => {
-                    alert("You make me smile 😄");
+                    alert(comp);
                 });
 
                 document.body.appendChild(confetti);
             }
-
         });
 
-        // "No" button movement
+        // No button behavior
         noBtn.addEventListener("mouseenter", () => {
-            if (noClicks < 2) {
+            if(noClicks < 2){
                 let x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 20);
                 let y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 20);
                 noBtn.style.transition = "all 0.5s";
@@ -210,20 +254,18 @@
             }
         });
 
-        // "No" click handler
         noBtn.addEventListener("click", () => {
             noClicks++;
-            if (noClicks === 1) {
-                dialogue.innerHTML = '"I\'m scared of him…"';
-            } else if (noClicks === 2) {
-                noBtn.innerHTML = "🖕";
+            if (noClicks === 1) dialogue.innerHTML = '"I\'m scared of him…"';
+            else if(noClicks ===2){
+                noBtn.innerHTML="🖕";
                 noBtn.classList.add("middleFinger");
-                noBtn.style.position = "absolute";
+                noBtn.style.position="absolute";
                 let rect = yesBtn.getBoundingClientRect();
-                noBtn.style.left = (rect.left + rect.width + 10) + "px";
-                noBtn.style.top = rect.top + "px";
-                noBtn.style.transform = "rotate(20deg)";
-                dialogue.innerHTML = '"Fine, you win!"';
+                noBtn.style.left=(rect.left + rect.width +10)+"px";
+                noBtn.style.top=rect.top+"px";
+                noBtn.style.transform="rotate(20deg)";
+                dialogue.innerHTML='"Fine, you win!"';
             }
         });
 
