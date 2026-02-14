@@ -69,32 +69,34 @@
             to {opacity: 1;}
         }
 
-        /* Floating hearts */
-        .heart {
+        /* Floating clickable confetti */
+        .confetti {
             position: absolute;
             width: 20px;
             height: 20px;
             background-color: #ff4e75;
             transform: rotate(45deg);
+            border-radius: 5px;
+            cursor: pointer;
             animation: floatUp linear infinite;
         }
 
-        .heart::before,
-        .heart::after {
+        .confetti::before,
+        .confetti::after {
             content: "";
             position: absolute;
             width: 20px;
             height: 20px;
-            background-color: #ff4e75;
+            background-color: inherit;
             border-radius: 50%;
         }
 
-        .heart::before { top: -10px; left: 0; }
-        .heart::after { left: 10px; top: 0; }
+        .confetti::before { top: -10px; left: 0; }
+        .confetti::after { left: 10px; top: 0; }
 
         @keyframes floatUp {
             0% { transform: translateY(0) rotate(var(--rotation)); opacity: 1; }
-            100% { transform: translateY(-800px) rotate(var(--rotation)); opacity: 0; }
+            100% { transform: translateY(-600px) rotate(var(--rotation)); opacity: 0; }
         }
 
         /* Middle finger style */
@@ -139,56 +141,6 @@
             to {opacity: 1;}
         }
 
-        /* Big heart with hidden easter egg */
-        .bigHeart {
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            top: 60%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(45deg) scale(0);
-            background-color: #ff4e75;
-            border-radius: 50%;
-            opacity: 0.9;
-            animation: bloom 1s forwards 2s;
-        }
-
-        .bigHeart::before,
-        .bigHeart::after {
-            content: "";
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            background-color: #ff4e75;
-            border-radius: 50%;
-        }
-        .bigHeart::before { top: -60px; left: 0; }
-        .bigHeart::after { left: 60px; top: 0; }
-
-        /* Small clickable easter egg */
-        .easterEgg {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-10%, -10%) rotate(45deg);
-            background-color: #ffcccc;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .easterEgg::before,
-        .easterEgg::after {
-            content: "";
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: #ffcccc;
-            border-radius: 50%;
-        }
-        .easterEgg::before { top: -10px; left: 0; }
-        .easterEgg::after { left: 10px; top: 0; }
     </style>
 </head>
 <body>
@@ -207,7 +159,7 @@
         let dialogue = document.getElementById("dialogue");
         let noClicks = 0;
 
-        // Yes button triggers flowers + first message
+        // Yes button triggers flowers + message + clickable confetti
         yesBtn.addEventListener("click", () => {
             document.body.innerHTML = "";
 
@@ -216,31 +168,34 @@
                 let flower = document.createElement('div');
                 flower.className = 'flower';
                 flower.style.left = (20 + Math.random()*60) + "%";
-                flower.style.top = (20 + Math.random()*50) + "%";
+                flower.style.top = (20 + Math.random()*30) + "%";
                 flower.style.backgroundColor = `hsl(${Math.random()*360}, 80%, 60%)`;
                 flower.style.animationDelay = `${i * 0.3}s`;
                 document.body.appendChild(flower);
             }
 
-            // First message
+            // Main message
             let message = document.createElement('div');
             message.className = 'message';
-            message.innerHTML = `"I find myself smiling for no reason, and then I realize there is a reason. It’s you ❤️"`;
+            message.innerHTML = `"I find myself smiling for no reason, and then I realize there is a reason. It’s you ❤️"\n"Glad you are my Valentine"`;
             document.body.appendChild(message);
 
-            // Big heart
-            let heart = document.createElement('div');
-            heart.className = 'bigHeart';
-            document.body.appendChild(heart);
+            // Clickable confetti
+            for (let i=0;i<10;i++){
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * (window.innerWidth - 40) + 'px';
+                confetti.style.top = 100 + Math.random() * 300 + 'px'; // stays above message
+                const rotations = [0, 90, 180, 270];
+                confetti.style.setProperty('--rotation', rotations[Math.floor(Math.random()*rotations.length)] + 'deg');
 
-            // Small hidden easter egg on top of heart
-            let easterEgg = document.createElement('div');
-            easterEgg.className = 'easterEgg';
-            heart.appendChild(easterEgg);
+                confetti.addEventListener("click", () => {
+                    alert("You make me smile 😄");
+                });
 
-            easterEgg.addEventListener("click", () => {
-                window.location.href = "valentine_easter_egg.html"; // Redirect to another page
-            });
+                document.body.appendChild(confetti);
+            }
+
         });
 
         // "No" button movement
@@ -272,22 +227,6 @@
             }
         });
 
-        // Floating hearts
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.className = 'heart';
-            heart.style.left = Math.random() * window.innerWidth + 'px';
-            heart.style.animationDuration = 4 + Math.random() * 3 + 's';
-            heart.style.fontSize = 10 + Math.random() * 20 + 'px';
-            const rotations = [0, 180, 90, -90];
-            const rot = rotations[Math.floor(Math.random() * rotations.length)];
-            heart.style.setProperty('--rotation', rot + 'deg');
-            document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 5000);
-        }
-
-        setInterval(createHeart, 400);
     </script>
-
 </body>
 </html>
