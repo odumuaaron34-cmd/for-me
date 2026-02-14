@@ -24,20 +24,8 @@
         }
 
         @keyframes pulse {
-            0%, 100% {
-                text-shadow: 
-                    0 0 5px #ff1e4d,
-                    0 0 10px #ff1e4d,
-                    0 0 20px #ff1e4d,
-                    0 0 40px #ff0033;
-            }
-            50% {
-                text-shadow: 
-                    0 0 10px #ff4d6d,
-                    0 0 20px #ff4d6d,
-                    0 0 30px #ff1e4d,
-                    0 0 60px #ff0033;
-            }
+            0%,100%{text-shadow:0 0 5px #ff1e4d,0 0 10px #ff1e4d,0 0 20px #ff1e4d,0 0 40px #ff0033;}
+            50%{text-shadow:0 0 10px #ff4d6d,0 0 20px #ff4d6d,0 0 30px #ff1e4d,0 0 60px #ff0033;}
         }
 
         button {
@@ -52,10 +40,7 @@
             position: relative;
         }
 
-        button:hover {
-            background-color: #ff2e5f;
-            transform: scale(1.1);
-        }
+        button:hover { background-color: #ff2e5f; transform: scale(1.1); }
 
         #dialogue {
             margin-top: 30px;
@@ -64,12 +49,8 @@
             animation: fadeIn 1s;
         }
 
-        @keyframes fadeIn {
-            from {opacity: 0;}
-            to {opacity: 1;}
-        }
+        @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
 
-        /* Floating hearts */
         .heart {
             position: absolute;
             width: 20px;
@@ -93,7 +74,6 @@
         .heart::before { top: -10px; left: 0; }
         .heart::after { left: 10px; top: 0; }
 
-        /* Flower animation */
         .flower {
             position: absolute;
             width: 50px;
@@ -105,16 +85,16 @@
         }
 
         @keyframes bloom {
-            0% { transform: scale(0); opacity: 0; }
-            50% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
+            0%{transform:scale(0);opacity:0;}
+            50%{transform:scale(1.2);opacity:1;}
+            100%{transform:scale(1);opacity:1;}
         }
 
         .message {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%,-50%);
             font-size: 24px;
             color: #ffb6c1;
             opacity: 0;
@@ -122,12 +102,8 @@
             white-space: pre-line;
         }
 
-        @keyframes fadeInText {
-            from {opacity: 0;}
-            to {opacity: 1;}
-        }
+        @keyframes fadeInText { from{opacity:0;} to{opacity:1;} }
 
-        /* Clickable confetti circles */
         .confetti {
             position: absolute;
             width: 20px;
@@ -136,11 +112,9 @@
             cursor: pointer;
             opacity: 0.9;
         }
-
     </style>
 </head>
 <body>
-
     <h1 class="glow">Nicole</h1>
     <h2>Do you want to be my Valentine? 💘</h2>
 
@@ -150,9 +124,9 @@
     <p id="dialogue"></p>
 
     <script>
-        let noBtn = document.getElementById("noBtn");
-        let yesBtn = document.getElementById("yesBtn");
-        let dialogue = document.getElementById("dialogue");
+        const noBtn = document.getElementById("noBtn");
+        const yesBtn = document.getElementById("yesBtn");
+        const dialogue = document.getElementById("dialogue");
         let noClicks = 0;
 
         const compliments = [
@@ -166,37 +140,41 @@
             "You’re just amazing, honestly 💕"
         ];
 
-        // Keep track of heart lanes to avoid overlap
-        const heartLanes = [];
-        for(let i=0;i<10;i++) heartLanes.push(i); // 10 lanes
+        // Heart lanes (10 lanes)
+        const maxLanes = 10;
+        const heartLanes = Array(maxLanes).fill(false); // false = free, true = occupied
 
         function createHeart() {
-            if(heartLanes.length === 0) return; // all lanes full
-            const laneIndex = heartLanes.shift();
-            const laneX = (laneIndex + 0.5) * (window.innerWidth / 10); // horizontal lane
+            // Find free lanes
+            const freeLanes = [];
+            heartLanes.forEach((occupied, i) => { if(!occupied) freeLanes.push(i); });
+            if(freeLanes.length === 0) return;
+
+            const laneIndex = freeLanes[Math.floor(Math.random()*freeLanes.length)];
+            heartLanes[laneIndex] = true;
 
             const heart = document.createElement('div');
             heart.className = 'heart';
+            const laneX = (laneIndex + 0.5) * (window.innerWidth / maxLanes);
             heart.style.left = laneX + 'px';
-            const size = 15 + Math.random() * 15;
-            heart.style.width = size + 'px';
-            heart.style.height = size + 'px';
+            const size = 15 + Math.random()*15;
+            heart.style.width = heart.style.height = size + 'px';
 
-            const speed = 1 + Math.random() * 1.5; // slower
             let posY = window.innerHeight + 20;
-            const swayAmplitude = 20 + Math.random()*10;
+            const speed = 0.8 + Math.random()*0.7; // slower
+            const swayAmp = 15 + Math.random()*10;
             const swaySpeed = 0.01 + Math.random()*0.02;
-            let sway = Math.random() * 2 * Math.PI;
+            let sway = Math.random()*2*Math.PI;
 
             function animate() {
                 posY -= speed;
                 sway += swaySpeed;
-                heart.style.transform = `translate(${Math.sin(sway)*swayAmplitude}px, ${posY}px) rotate(45deg)`;
+                heart.style.transform = `translate(${Math.sin(sway)*swayAmp}px, ${posY}px) rotate(45deg)`;
                 if(posY + size > 0){
                     requestAnimationFrame(animate);
                 } else {
                     heart.remove();
-                    heartLanes.push(laneIndex); // free lane
+                    heartLanes[laneIndex] = false; // free lane
                 }
             }
 
@@ -209,7 +187,7 @@
 
             // Flowers
             for(let i=0;i<5;i++){
-                let flower = document.createElement('div');
+                const flower = document.createElement('div');
                 flower.className = 'flower';
                 flower.style.left = (20 + Math.random()*60) + "%";
                 flower.style.top = (20 + Math.random()*30) + "%";
@@ -219,48 +197,48 @@
             }
 
             // Message
-            let message = document.createElement('div');
+            const message = document.createElement('div');
             message.className = 'message';
             message.innerHTML = `"I find myself smiling for no reason, and then I realize there is a reason. It’s you ❤️"\n"Glad you are my Valentine"`;
             document.body.appendChild(message);
 
-            // Start floating hearts
-            setInterval(createHeart, 800); // slower, every 0.8s
+            // Hearts
+            setInterval(createHeart, 900);
 
-            // Clickable circle confetti (spaced out)
-            const confettiPositions = [0.05, 0.15, 0.25, 0.35, 0.55, 0.65, 0.75, 0.85]; // horizontal fractions
-            confettiPositions.forEach((frac, idx) => {
+            // Clickable confetti (spaced)
+            const confettiPositions = [0.05,0.15,0.25,0.35,0.55,0.65,0.75,0.85];
+            confettiPositions.forEach((frac, idx)=>{
                 const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = (frac * window.innerWidth) + 'px';
-                confetti.style.top = 100 + Math.random()*150 + 'px';
+                confetti.className='confetti';
+                confetti.style.left = (frac*window.innerWidth)+'px';
+                confetti.style.top = 100 + Math.random()*150 +'px';
                 confetti.style.backgroundColor = `hsl(${Math.random()*360}, 80%, 60%)`;
-                confetti.addEventListener("click", () => alert(compliments[idx]));
+                confetti.addEventListener("click", ()=>alert(compliments[idx]));
                 document.body.appendChild(confetti);
             });
         });
 
-        // No button
-        noBtn.addEventListener("mouseenter", () => {
-            if(noClicks < 2){
-                let x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 20);
-                let y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 20);
-                noBtn.style.transition = "all 0.5s";
-                noBtn.style.position = "absolute";
-                noBtn.style.left = x + "px";
-                noBtn.style.top = y + "px";
+        // No button behavior
+        noBtn.addEventListener("mouseenter", ()=>{
+            if(noClicks<2){
+                let x=Math.random()*(window.innerWidth-noBtn.offsetWidth-20);
+                let y=Math.random()*(window.innerHeight-noBtn.offsetHeight-20);
+                noBtn.style.transition="all 0.5s";
+                noBtn.style.position="absolute";
+                noBtn.style.left=x+"px";
+                noBtn.style.top=y+"px";
             }
         });
 
-        noBtn.addEventListener("click", () => {
+        noBtn.addEventListener("click", ()=>{
             noClicks++;
-            if(noClicks === 1) dialogue.innerHTML='"I\'m scared of him…"';
+            if(noClicks===1) dialogue.innerHTML='"I\'m scared of him…"';
             else if(noClicks===2){
                 noBtn.innerHTML="🖕";
                 noBtn.classList.add("middleFinger");
                 noBtn.style.position="absolute";
-                let rect = yesBtn.getBoundingClientRect();
-                noBtn.style.left=(rect.left + rect.width +10)+"px";
+                let rect=yesBtn.getBoundingClientRect();
+                noBtn.style.left=(rect.left+rect.width+10)+"px";
                 noBtn.style.top=rect.top+"px";
                 noBtn.style.transform="rotate(20deg)";
                 dialogue.innerHTML='"Fine, you win!"';
@@ -268,6 +246,5 @@
         });
 
     </script>
-
 </body>
 </html>
