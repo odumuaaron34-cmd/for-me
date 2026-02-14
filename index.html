@@ -1,144 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Strategic Decision 💘</title>
-    <style>
-        body {
-            background-color: #0f0f1a;
-            color: white;
-            font-family: 'Segoe UI', sans-serif;
-            text-align: center;
-            padding-top: 100px;
-            overflow: hidden;
-        }
-
-        .glow {
-            font-size: 60px;
-            color: #ff1e4d;
-            text-shadow: 
-                0 0 5px #ff1e4d,
-                0 0 10px #ff1e4d,
-                0 0 20px #ff1e4d,
-                0 0 40px #ff0033;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%,100%{text-shadow:0 0 5px #ff1e4d,0 0 10px #ff1e4d,0 0 20px #ff1e4d,0 0 40px #ff0033;}
-            50%{text-shadow:0 0 10px #ff4d6d,0 0 20px #ff4d6d,0 0 30px #ff1e4d,0 0 60px #ff0033;}
-        }
-
-        button {
-            background-color: #ff4e75;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 25px;
-            cursor: pointer;
-            margin: 15px;
-            transition: 0.3s;
-            position: relative;
-        }
-
-        button:hover { background-color: #ff2e5f; transform: scale(1.1); }
-
-        #dialogue {
-            margin-top: 30px;
-            font-size: 22px;
-            color: #ff8fab;
-            animation: fadeIn 1s;
-        }
-
-        @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-
-        /* FIXED HEART */
-        .heart {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: #ff4e75;
-            transform: rotate(45deg);
-            opacity: 0.85;
-        }
-
-        .heart::before,
-        .heart::after {
-            content: "";
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-color: inherit;
-            border-radius: 50%;
-        }
-
-        .heart::before {
-            top: -50%;
-            left: 0;
-        }
-
-        .heart::after {
-            left: 50%;
-            top: 0;
-        }
-
-        .flower {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            opacity: 0.9;
-            transform: scale(0);
-            animation: bloom 1s forwards;
-        }
-
-        @keyframes bloom {
-            0%{transform:scale(0);opacity:0;}
-            50%{transform:scale(1.2);opacity:1;}
-            100%{transform:scale(1);opacity:1;}
-        }
-
-        .message {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%,-50%);
-            font-size: 24px;
-            color: #ffb6c1;
-            opacity: 0;
-            animation: fadeInText 2s forwards 0.5s;
-            white-space: pre-line;
-            text-align: center;
-            max-width: 80%;
-        }
-
-        @keyframes fadeInText { from{opacity:0;} to{opacity:1;} }
-
-        .confetti {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            cursor: pointer;
-            opacity: 0.9;
-        }
-    </style>
-</head>
-<body>
-
-    <h1 class="glow">Nicole</h1>
-    <h2>Do you want to be my Valentine? 💘</h2>
-
-    <button id="yesBtn">Yes 🙂</button>
-    <button id="noBtn">No 😌</button>
-
-    <p id="dialogue"></p>
-
 <script>
 
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const dialogue = document.getElementById("dialogue");
 let noClicks = 0;
+
+let score = 0;
+let scoreDisplay;
 
 const compliments = [
     "Your smile is cute 😄",
@@ -179,10 +47,44 @@ function createHeart() {
     const swaySpeed = 0.01 + Math.random()*0.02;
     let sway = Math.random()*2*Math.PI;
 
+    // CLICKABLE HEART
+    heart.style.cursor = "pointer";
+
+    heart.addEventListener("click", () => {
+
+        score++;
+        scoreDisplay.innerText = "Points: " + score + " 💖";
+
+        // 🔊 Pop sound
+        const popSound = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-bubble-pop-up-alert-notification-2357.mp3");
+        popSound.play();
+
+        heart.classList.add("pop");
+
+        // 💌 Compliment every 10 points
+        if (score % 10 === 0 && score < 50) {
+            alert(compliments[Math.floor(Math.random()*compliments.length)]);
+        }
+
+        // 🏆 Win at 50 points
+        if (score === 50) {
+            const winMessage = document.createElement("div");
+            winMessage.className = "message";
+            winMessage.innerHTML = "You officially win my heart 💘🏆";
+            document.body.appendChild(winMessage);
+        }
+
+        setTimeout(() => {
+            heart.remove();
+        }, 300);
+
+        heartLanes[laneIndex] = false;
+    });
+
     function animate() {
         posY -= speed;
         sway += swaySpeed;
-        heart.style.transform = 
+        heart.style.transform =
             `translate(${Math.sin(sway)*swayAmp}px, ${posY}px) rotate(45deg)`;
 
         if(posY + size > 0){
@@ -201,44 +103,22 @@ yesBtn.addEventListener("click", () => {
 
     document.body.innerHTML = "";
 
-    // Flowers
-    for(let i=0;i<5;i++){
-        const flower = document.createElement('div');
-        flower.className = 'flower';
-        flower.style.left = (20 + Math.random()*60) + "%";
-        flower.style.top = (20 + Math.random()*30) + "%";
-        flower.style.backgroundColor = `hsl(${Math.random()*360}, 80%, 60%)`;
-        flower.style.animationDelay = `${i*0.3}s`;
-        document.body.appendChild(flower);
-    }
+    // Create score display
+    scoreDisplay = document.createElement("div");
+    scoreDisplay.className = "score";
+    scoreDisplay.innerText = "Points: 0 💖";
+    document.body.appendChild(scoreDisplay);
 
-    // Romantic message (NO QUOTES)
+    // Romantic message
     const message = document.createElement('div');
     message.className = 'message';
-    message.innerHTML = 
+    message.innerHTML =
 `I find myself smiling for no reason, and then I realize there is a reason. It’s you ❤️
 
 Glad you are my Valentine`;
     document.body.appendChild(message);
 
-    // Floating hearts
     setInterval(createHeart, 900);
-
-    // Confetti (placed high to avoid message)
-    const confettiPositions = [0.05,0.15,0.25,0.35,0.65,0.75,0.85,0.95];
-
-    confettiPositions.forEach((frac, idx)=>{
-        const confetti = document.createElement('div');
-        confetti.className='confetti';
-        confetti.style.left = (frac*window.innerWidth)+'px';
-        confetti.style.top = 40 + Math.random()*80 +'px'; // moved up
-        confetti.style.backgroundColor = 
-            `hsl(${Math.random()*360}, 80%, 60%)`;
-        confetti.addEventListener("click", 
-            ()=>alert(compliments[idx]));
-        document.body.appendChild(confetti);
-    });
-
 });
 
 noBtn.addEventListener("mouseenter", ()=>{
@@ -267,5 +147,3 @@ noBtn.addEventListener("click", ()=>{
 });
 
 </script>
-</body>
-</html>
